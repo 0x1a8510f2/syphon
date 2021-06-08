@@ -23,7 +23,7 @@ steps:
       - flutter config --enable-linux-desktop
       # Build the linux app exec
       - flutter doctor
-      - flutter build linux --release
+      - flutter build linux -v --release
 
 ---
 kind: pipeline
