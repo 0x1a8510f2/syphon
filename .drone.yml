@@ -1,0 +1,62 @@
+kind: pipeline
+type: docker
+name: linux-prod
+trigger:
+  branch:
+    - chore/pipeline
+  event:
+    - push
+steps:
+  - name: build linux
+    image: cirrusci/flutter:2.0.6
+    commands:
+      # Keep track of the time when build was started
+      - echo $(date -Iseconds) > BUILD_START_TIME
+      # Install dependencies (git should be pre-installed)
+      - apt-get update -y
+      - apt-get install --no-install-recommends -y cmake ninja-build clang pkg-config libgtk-3-dev
+      - git submodule update --init --recursive
+      # Set up flutter config
+      - flutter config --no-analytics
+      - flutter pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter config --enable-linux-desktop
+      # Build the linux app exec
+      - flutter doctor
+      - flutter build linux --release
+
+---
+kind: pipeline
+type: docker
+name: android-dev
+trigger:
+  branch:
+    - dev
+  event:
+    - push
+steps:
+  - name: build android
+    image: cirrusci/flutter:2.0.6
+    commands:
+      # Keep track of the time when build was started
+      - echo $(date -Iseconds) > BUILD_START_TIME
+      # Environment variables
+      - export DEBIAN_FRONTEND=noninteractive
+      - export ANDROID_NDK_HOME=/opt/android-sdk-linux/ndk-bundle/
+      # Install dependencies (git should be pre-installed)
+      - apt-get update && apt-get install --no-install-recommends -y cmake ninja-build
+      - git submodule update --init --recursive
+      - sdkmanager "ndk-bundle"
+      # Set up flutter
+      - flutter config --no-analytics
+      - flutter pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      # Modify gradle build script (remove/change parts which don't work in this environment)
+      - sed -i '/keystoreProperties\[/d' android/app/build.gradle
+      - sed -i 's/version "3.10.2"/version "3.7.0+"/g' android/app/build.gradle
+      - sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle
+      # Modify package and app name to allow for installing alongside normal Syphon
+      - sed -i 's/android:label="Syphon"/android:label="Syphon Nightly (0x1a)"/g' android/app/src/main/AndroidManifest.xml
+      - sed -i 's/applicationId "org.tether.tether"/applicationId "space.oxlabslofs.syphon.nightly"/g' android/app/build.gradle
+      # Build the APK
+      - flutter build apk --split-per-abi
