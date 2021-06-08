@@ -7,9 +7,10 @@ steps:
     commands:
       # Keep track of the time when build was started
       - echo $(date -Iseconds) > BUILD_START_TIME
-      # Set up flutter
+      # Set up flutter config
       - flutter config --no-analytics
       - flutter pub get
       - flutter pub run build_runner build --delete-conflicting-outputs
-      # Build the APK
+      - flutter config --enable-linux-desktop
+      # Build the linux app exec
       - flutter build linux --release
