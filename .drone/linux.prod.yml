@@ -13,7 +13,7 @@ steps:
       # Keep track of the time when build was started
       - echo $(date -Iseconds) > BUILD_START_TIME
       # Install dependencies (git should be pre-installed)
-      - apt-get update && apt-get install --no-install-recommends -y cmake ninja-build
+      - apt-get update && apt-get install --no-install-recommends -y cmake ninja-build clang
       - git submodule update --init --recursive
       # Set up flutter config
       - flutter config --no-analytics
