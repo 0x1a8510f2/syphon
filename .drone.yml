@@ -14,7 +14,7 @@ steps:
       - echo $(date -Iseconds) > BUILD_START_TIME
       # Install dependencies (git should be pre-installed)
       - apt-get update -y
-      - apt-get install -y cmake ninja-build clang pkg-config libgtk-3-dev liblzma-dev
+      - apt-get install -y cmake ninja-build clang pkg-config libgtk-3-dev liblzma-dev libsecret
       - git submodule update --init --recursive
       # Set up flutter config
       - flutter config --no-analytics
