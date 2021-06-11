@@ -28,8 +28,8 @@ steps:
       - sed -i 's/version "3.10.2"/version "3.7.0+"/g' android/app/build.gradle
       - sed -i 's/signingConfig signingConfigs.release/signingConfig signingConfigs.debug/g' android/app/build.gradle
       # Modify package and app name to allow for installing alongside normal Syphon
-      - sed -i 's/android:label="Syphon"/android:label="Syphon Nightly (0x1a)"/g' android/app/src/main/AndroidManifest.xml
-      - sed -i 's/applicationId "org.tether.tether"/applicationId "space.oxlabslofs.syphon.nightly"/g' android/app/build.gradle
+      - sed -i 's/android:label="Syphon"/android:label="Syphon Nightly"/g' android/app/src/main/AndroidManifest.xml
+      - sed -i 's/applicationId "org.tether.tether"/applicationId "org.syphon.syphon.nightly"/g' android/app/build.gradle
       # Build the APK
       - flutter build apk --split-per-abi
 ---
@@ -59,7 +59,7 @@ steps:
       # Build the linux app exec
       - flutter doctor
       - flutter build linux -v --release
-      - flutter build bundle -v --release
+      - flutter build bundle -v --release --no-tree-shake-icons
 
   - name: release linux
     image: plugins/gitea-release
