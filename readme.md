@@ -35,7 +35,7 @@ a privacy centric matrix client - now in open alpha*
     <a href="https://matrix.to/#/#syphon:matrix.org">
         <img src="https://img.shields.io/matrix/syphon:matrix.org?color=teal"/>
     </a>
-</p>
+</p> 
 
 <p align='center'> 
     <img src="assets/screenshots/01-android-tiny.png"/>

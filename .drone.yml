@@ -1,33 +1,5 @@
 kind: pipeline
 type: docker
-name: linux-prod
-trigger:
-  branch:
-    - chore/pipeline
-  event:
-    - push
-steps:
-  - name: build linux
-    image: cirrusci/flutter:2.0.6
-    commands:
-      # Keep track of the time when build was started
-      - echo $(date -Iseconds) > BUILD_START_TIME
-      # Install dependencies
-      - apt-get update -y
-      - apt-get install -y cmake ninja-build clang pkg-config libgtk-3-dev liblzma-dev libblkid-dev libsecret-1-dev libolm-dev libolm3 libsqlite3-dev libjsoncpp-dev
-      - git submodule update --init --recursive
-      # Set up flutter config
-      - flutter config --no-analytics
-      - flutter pub get
-      - flutter pub run build_runner build --delete-conflicting-outputs
-      - flutter config --enable-linux-desktop
-      # Build the linux app exec
-      - flutter doctor
-      - flutter build linux -v --release
-
----
-kind: pipeline
-type: docker
 name: android-dev
 trigger:
   branch:
@@ -60,3 +32,42 @@ steps:
       - sed -i 's/applicationId "org.tether.tether"/applicationId "space.oxlabslofs.syphon.nightly"/g' android/app/build.gradle
       # Build the APK
       - flutter build apk --split-per-abi
+---
+kind: pipeline
+type: docker
+name: linux-prod
+trigger:
+  branch:
+    - chore/pipeline
+  event:
+    - push
+steps:
+  - name: build linux
+    image: cirrusci/flutter:2.0.6
+    commands:
+      # Keep track of the time when build was started
+      - echo $(date -Iseconds) > BUILD_START_TIME
+      # Install dependencies
+      - apt-get update -y
+      - apt-get install -y cmake ninja-build clang pkg-config libgtk-3-dev liblzma-dev libblkid-dev libsecret-1-dev libolm-dev libolm3 libsqlite3-dev libjsoncpp-dev
+      - git submodule update --init --recursive
+      # Set up flutter config
+      - flutter config --no-analytics
+      - flutter pub get
+      - flutter pub run build_runner build --delete-conflicting-outputs
+      - flutter config --enable-linux-desktop
+      # Build the linux app exec
+      - flutter doctor
+      - flutter build linux -v --release
+      - flutter build bundle -v --release
+
+  - name: release linux
+    image: plugins/gitea-release
+    settings:
+      title: v${DRONE_TAG}-linux
+      api_key:
+        from_secret: GITEA_API_KEY
+      base_url: https://git.syphon.org
+      files: /drone/src/build/linux/release/bundle/*
+      when:
+        event: tag
