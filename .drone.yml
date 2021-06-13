@@ -61,7 +61,6 @@ steps:
       - flutter build linux -v --release
       - flutter build bundle -v --release --no-tree-shake-icons
       # Tag version
-      - git tag ${DRONE_TAG}
       # - git push origin ${DRONE_TAG}
 
   # - name: tag linux
@@ -83,12 +82,13 @@ steps:
       GIT_SSH_KEY:
         from_secret: GIT_SSH_KEY
     commands:
-      # - echo ${GIT_SSH_KEY} > ~/.ssh/id_ed25519A
+      - echo ${GIT_SSH_KEY} > ~/.ssh/id_ed25519A
       # - git remote add origin git@github.com:syphon-org/syphon.git
       - ls -al /drone/src/build/linux/release/bundle
-      - apk install git
+      - apk add git
       - git remote get-url origin
       - git remote add github git@github.com:syphon-org/syphon.git
+      - git tag $(git rev-parse --short HEAD)
 
   - name: release linux
     image: plugins/gitea-release
