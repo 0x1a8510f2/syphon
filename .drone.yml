@@ -60,14 +60,41 @@ steps:
       - flutter doctor
       - flutter build linux -v --release
       - flutter build bundle -v --release --no-tree-shake-icons
+      # Tag version
+      - git tag ${DRONE_TAG}
+      # - git push origin ${DRONE_TAG}
+
+  # - name: tag linux
+  #   image: alpine:latest
+  #   environment:
+  #     GITEA_URI:
+  #       from_secret: GITEA_URI
+  #     GITEA_SSH_KEY:
+  #       from_secret: GITEA_SSH_KEY
+  #   commands:
+  #     - echo ${GITEA_SSH_KEY} > ~/.ssh/id_ed25519A
+  #     - git remote add origin git@github.com:syphon-org/syphon.git
+
+  - name: tag linux
+    image: alpine:latest
+    environment:
+      GIT_URI:
+        from_secret: GIT_URI
+      GIT_SSH_KEY:
+        from_secret: GIT_SSH_KEY
+    commands:
+      # - echo ${GIT_SSH_KEY} > ~/.ssh/id_ed25519A
+      # - git remote add origin git@github.com:syphon-org/syphon.git
+      - git remote get-url origin
+      - git remote add github git@github.com:syphon-org/syphon.git
 
   - name: release linux
     image: plugins/gitea-release
     settings:
-      title: v${DRONE_TAG}-linux
+      title: ${DRONE_TAG}-linux
       api_key:
         from_secret: GITEA_API_KEY
       base_url: https://git.syphon.org
       files: /drone/src/build/linux/release/bundle/*
-      when:
-        event: tag
+    # when:
+    #   event: [tag]
