@@ -82,13 +82,15 @@ steps:
       GIT_SSH_KEY:
         from_secret: GIT_SSH_KEY
     commands:
-      - echo ${GIT_SSH_KEY} > ~/.ssh/id_ed25519A
+      - ls -al /drone
+      # - echo $GIT_SSH_KEY > ~/.ssh/id_ed25519A
       # - git remote add origin git@github.com:syphon-org/syphon.git
-      - ls -al /drone/src/build/linux/release/bundle
       - apk add git
-      - git remote get-url origin
-      - git remote add github git@github.com:syphon-org/syphon.git
-      - git tag $(git rev-parse --short HEAD)
+      # - git remote get-url origin
+      # - git remote add github git@github.com:syphon-org/syphon.git
+      - git status
+      # - git tag $(git rev-parse --short HEAD)
+      # - git push github $(git rev-parse --short HEAD)
 
   - name: release linux
     image: plugins/gitea-release
