@@ -85,6 +85,8 @@ steps:
     commands:
       # - echo ${GIT_SSH_KEY} > ~/.ssh/id_ed25519A
       # - git remote add origin git@github.com:syphon-org/syphon.git
+      - ls -al /drone/src/build/linux/release/bundle
+      - apk install git
       - git remote get-url origin
       - git remote add github git@github.com:syphon-org/syphon.git
 
