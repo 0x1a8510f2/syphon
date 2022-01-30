@@ -39,6 +39,7 @@ class Rooms extends Table {
   BoolColumn get drafting => boolean()();
   BoolColumn get direct => boolean()();
   BoolColumn get sending => boolean()();
+  BoolColumn get calling => boolean()();
   BoolColumn get invite => boolean()();
   BoolColumn get guestEnabled => boolean()();
   BoolColumn get encryptionEnabled => boolean()();

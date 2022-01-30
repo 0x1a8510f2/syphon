@@ -42,7 +42,7 @@ String formatPreview({required Room room, Message? message}) {
 
   // Show topic if the user has joined a group but not sent
   if (message == null) {
-    // romm is just an invite
+    // room is just an invite
     if (room.invite) {
       return 'Invite to chat';
     }

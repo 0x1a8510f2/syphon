@@ -72,12 +72,13 @@ storageMiddleware(Database? storageOld, StorageDatabase? storage) {
         final _action = action as UpdateRoom;
         final rooms = store.state.roomStore.rooms;
         final isSending = _action.sending != null;
+        final isCalling = _action.calling != null;
         final isDrafting = _action.draft != null;
         final isLastRead = _action.lastRead != null;
 
-        // room information (or a room) should be small enought to update frequently
+        // room information (or a room) should be small enough to update frequently
         // TODO: extract room event keys to a helper class / object to remove large map copies
-        if ((isSending || isDrafting || isLastRead) && rooms.containsKey(_action.id)) {
+        if ((isSending || isCalling || isDrafting || isLastRead) && rooms.containsKey(_action.id)) {
           final room = rooms[_action.id];
           saveRoom(room!, storage: storage!);
         }

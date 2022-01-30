@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:syphon/global/values.dart';
+import 'package:syphon/views/home/chat/chat-call-screen.dart';
 import 'package:syphon/views/home/chat/chat-detail-all-users-screen.dart';
 import 'package:syphon/views/home/chat/chat-detail-message-screen.dart';
 import 'package:syphon/views/home/chat/chat-detail-screen.dart';
@@ -95,6 +96,7 @@ class Routes {
   static const chat = '/home/chat';
   static const chatUsers = '/home/chat/users';
   static const chatDetails = '/home/chat/details';
+  static const chatCall = '/home/chat/call';
   static const chatMediaPreview = '/home/chat/media';
   static const messageDetails = '/home/message/details';
 
@@ -134,6 +136,7 @@ class NavigationProvider {
         Routes.chatMediaPreview: (BuildContext context) => const MediaPreviewScreen(),
         Routes.messageDetails: (BuildContext context) => const MessageDetailsScreen(),
         Routes.chatUsers: (BuildContext context) => const ChatUsersDetailScreen(),
+        Routes.chatCall: (BuildContext context) => const ChatCallScreen(),
         Routes.searchUsers: (BuildContext context) => const SearchUserScreen(),
         Routes.userDetails: (BuildContext context) => const UserProfileScreen(),
         Routes.userInvite: (BuildContext context) => const InviteUsersScreen(),

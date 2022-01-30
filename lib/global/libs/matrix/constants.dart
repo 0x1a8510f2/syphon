@@ -30,6 +30,11 @@ class EventTypes {
   static const encryption = 'm.room.encryption';
   static const roomKey = 'm.room_key';
   static const roomKeyRequest = 'm.room_key_request';
+
+  static const callInvite = 'm.call.invite';
+  static const callAnswer = 'm.call.answer';
+  static const callCandidates = 'm.call.candidates';
+  static const callHangup = 'm.call.hangup';
 }
 
 enum MessageType {

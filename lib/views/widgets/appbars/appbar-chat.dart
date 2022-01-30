@@ -47,6 +47,8 @@ class AppBarChat extends StatefulWidget implements PreferredSizeWidget {
   final FocusNode? focusNode;
 
   final Function? onBack;
+  final Function? onStartCall;
+  final Function? onEndCall;
   final Function? onDebug;
   final Function? onSearch;
   final Function? onToggleSearch;
@@ -62,6 +64,8 @@ class AppBarChat extends StatefulWidget implements PreferredSizeWidget {
     this.elevation,
     this.focusNode,
     this.onBack,
+    this.onStartCall,
+    this.onEndCall,
     this.onDebug,
     this.onSearch,
     this.onToggleSearch,
@@ -344,6 +348,28 @@ class AppBarChatState extends State<AppBarChat> with Lifecycle<AppBarChat> {
                 color: Colors.white,
                 onPressed: () {
                   widget.onDebug!();
+                },
+              ),
+            ),
+            Visibility(
+              // TODO: consider room call permissions
+              visible: !widget.room.calling,
+              replacement: IconButton(
+                icon: Icon(Icons.call_end),
+                iconSize: Dimensions.buttonAppBarSize,
+                tooltip: 'End Call',
+                color: Colors.red,
+                onPressed: () {
+                  widget.onEndCall!();
+                },
+              ),
+              child: IconButton(
+                icon: Icon(Icons.call),
+                iconSize: Dimensions.buttonAppBarSize,
+                tooltip: 'Start Call',
+                color: Colors.white,
+                onPressed: () {
+                  widget.onStartCall!();
                 },
               ),
             ),

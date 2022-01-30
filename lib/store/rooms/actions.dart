@@ -47,6 +47,7 @@ class UpdateRoom {
   final String? id; // room id
   final bool? syncing;
   final bool? sending;
+  final bool? calling;
   final Message? draft;
   final Message? reply;
   final int? lastRead;
@@ -57,6 +58,7 @@ class UpdateRoom {
     this.reply,
     this.syncing,
     this.sending,
+    this.calling,
     this.lastRead,
   });
 }

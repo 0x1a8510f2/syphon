@@ -31,6 +31,7 @@ RoomStore roomReducer([RoomStore state = const RoomStore(), dynamic action]) {
       rooms[action.id] = rooms[action.id]!.copyWith(
         draft: action.draft,
         reply: action.reply,
+        calling: action.calling,
         sending: action.sending,
         syncing: action.syncing,
         lastRead: action.lastRead,

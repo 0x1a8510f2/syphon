@@ -15,6 +15,7 @@ import 'package:syphon/global/assets.dart';
 import 'package:syphon/global/colours.dart';
 import 'package:syphon/global/dimensions.dart';
 import 'package:syphon/global/libs/matrix/constants.dart';
+import 'package:syphon/global/libs/matrix/index.dart';
 import 'package:syphon/global/print.dart';
 import 'package:syphon/global/strings.dart';
 import 'package:syphon/store/crypto/actions.dart';
@@ -23,6 +24,7 @@ import 'package:syphon/store/crypto/events/selectors.dart';
 import 'package:syphon/store/events/actions.dart';
 import 'package:syphon/store/events/messages/actions.dart';
 import 'package:syphon/store/events/messages/model.dart';
+import 'package:syphon/store/events/model.dart';
 import 'package:syphon/store/events/reactions/actions.dart';
 import 'package:syphon/store/events/selectors.dart';
 import 'package:syphon/store/index.dart';
@@ -35,6 +37,7 @@ import 'package:syphon/store/settings/chat-settings/selectors.dart';
 import 'package:syphon/store/settings/theme-settings/model.dart';
 import 'package:syphon/store/user/model.dart';
 import 'package:syphon/store/user/selectors.dart';
+import 'package:syphon/views/home/chat/chat-call-screen.dart';
 import 'package:syphon/views/home/chat/media-preview-screen.dart';
 import 'package:syphon/views/home/chat/widgets/chat-input.dart';
 import 'package:syphon/views/home/chat/widgets/dialog-encryption.dart';
@@ -163,7 +166,7 @@ class ChatScreenState extends State<ChatScreen> {
     final store = StoreProvider.of<AppState>(context);
     final room = props.room;
 
-    // dont attempt to decrypt if encryption is not enabled
+    // don't attempt to decrypt if encryption is not enabled
     if (!room.encryptionEnabled) {
       return;
     }
@@ -173,7 +176,7 @@ class ChatScreenState extends State<ChatScreen> {
       props.room.id,
     );
 
-    // dont attempt to decrypt if all messages are already decrypted
+    // don't attempt to decrypt if all messages are already decrypted
     if (!hasDecryptable) {
       return;
     }
@@ -292,7 +295,7 @@ class ChatScreenState extends State<ChatScreen> {
         );
       }
     } catch (error) {
-      // Globally notify other widgets you're sending a message in this room
+      // Globally notify other widgets you're done sending a message in this room
       store.dispatch(
         UpdateRoom(id: props.room.id, sending: false),
       );
@@ -361,6 +364,54 @@ class ChatScreenState extends State<ChatScreen> {
         mediaList: [file],
         onConfirmSend: () => onSendMedia(file, type, props),
       ),
+    );
+  }
+
+  onStartCall(_Props props) {
+    // Globally notify other widgets you're calling in this room
+    final store = StoreProvider.of<AppState>(context);
+    store.dispatch(
+      UpdateRoom(id: props.room.id, calling: true),
+    );
+
+    // Send VoIP invite event
+    final message = Message(
+      type: EventTypes.callInvite,
+      content: {
+        'a': 'b',
+      },
+    );
+
+    if (props.room.encryptionEnabled) {
+      final info = EncryptInfo.generate();
+      store.dispatch(MatrixApi.sendEvent(
+        roomId: props.room.id,
+        message: message,
+        info: info,
+      ));
+    } else {
+      store.dispatch(sendMessage(
+        roomId: props.room.id,
+        message: message,
+      ));
+    }
+
+    // Automatically open call screen
+    Navigator.pushNamed(
+      context,
+      Routes.chatCall,
+      arguments: ChatCallArguments(
+        roomId: props.room.id,
+        title: props.room.name,
+      ),
+    );
+  }
+
+  onEndCall(_Props props) {
+    // Globally notify other widgets you're done calling in this room
+    final store = StoreProvider.of<AppState>(context);
+    store.dispatch(
+      UpdateRoom(id: props.room.id, calling: false),
     );
   }
 
@@ -577,6 +628,12 @@ class ChatScreenState extends State<ChatScreen> {
             room: props.room,
             color: props.chatColorPrimary,
             badgesEnabled: props.roomTypeBadgesEnabled,
+            onStartCall: () {
+              onStartCall(props);
+            },
+            onEndCall: () {
+              onEndCall(props);
+            },
             onDebug: () {
               onCheatCode(props);
             },
@@ -621,7 +678,7 @@ class ChatScreenState extends State<ChatScreen> {
                   Expanded(
                     child: GestureDetector(
                       onTap: () {
-                        // Disimiss keyboard if they click outside the text input
+                        // Dismiss keyboard if they click outside the text input
                         inputFieldNode.unfocus();
                         FocusScope.of(context).unfocus();
                       },

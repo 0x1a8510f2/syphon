@@ -37,6 +37,7 @@ class Room implements drift.Insertable<Room> {
   final bool drafting;
   final bool direct;
   final bool sending;
+  final bool calling;
   final bool invite;
   final bool guestEnabled;
   final bool encryptionEnabled;
@@ -116,6 +117,7 @@ class Room implements drift.Insertable<Room> {
     this.direct = false,
     this.syncing = false,
     this.sending = false,
+    this.calling = false,
     this.limited = false,
     this.hidden = false,
     this.archived = false,
@@ -152,6 +154,7 @@ class Room implements drift.Insertable<Room> {
     bool? limited,
     bool? syncing,
     bool? sending,
+    bool? calling,
     bool? drafting,
     bool? hidden,
     bool? archived,
@@ -191,6 +194,7 @@ class Room implements drift.Insertable<Room> {
         hidden: hidden ?? this.hidden,
         archived: archived ?? this.archived,
         sending: sending ?? this.sending,
+        calling: calling ?? this.calling,
         syncing: syncing ?? this.syncing,
         limited: limited ?? this.limited,
         lastRead: lastRead ?? this.lastRead,
@@ -614,6 +618,7 @@ class Room implements drift.Insertable<Room> {
       drafting: drift.Value(drafting),
       direct: drift.Value(direct),
       sending: drift.Value(sending),
+      calling: drift.Value(calling),
       invite: drift.Value(invite),
       guestEnabled: drift.Value(guestEnabled),
       encryptionEnabled: drift.Value(encryptionEnabled),
